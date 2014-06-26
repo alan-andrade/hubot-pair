@@ -24,7 +24,11 @@ describe 'Controller', ->
       it 'prints available developers', ->
         @controller.add 'jake'
         @controller.add 'fin', 40
-        expect(@controller.display()).to.match(/jake\[60\], fin\[40\]/)
+        str = @controller.display()
+        expect(str).to.match(/jake/)
+        expect(str).to.match(/60/)
+        expect(str).to.match(/fin/)
+        expect(str).to.match(/40/)
 
       it 'prints pairing developers', ->
         @controller.add 'jake'
@@ -46,6 +50,17 @@ describe 'Controller', ->
     @controller.pair 'jake', 'fin'
     expect(@controller.devs.size()).to.eq(2)
     expect(@controller.pairs.size()).to.eq(1)
+
+  it 'releases both developers after time is up', ->
+    try
+      clock = sinon.useFakeTimers(+new Date())
+      @controller.add 'jake', 20
+      @controller.add 'fin', 15
+      @controller.pair 'jake', 'fin'
+      clock.tick('00:15:01')
+      expect(@controller.pairs.size()).to.eq(0)
+    finally
+      clock.restore()
 
  describe 'Developer', ->
    it 'has a name and availability', ->
@@ -80,3 +95,13 @@ describe 'Controller', ->
       pair = new Pair jake, fin
       for dev in [jake, fin]
         expect(dev.isPairing).to.be.true
+
+    it 'reads nicely developer1-developer2', ->
+      pair = new Pair new Developer('jake'), new Developer('fin')
+      expect(pair.toString()).to.eq('jake-fin')
+
+    it 'calculates time left depending on developers timeLeft', ->
+      jake = new Developer 'jake', 8
+      fin = new Developer 'fin', 15
+      pair = new Pair jake, fin
+      expect(pair.timeLeft()).to.eq(8)
