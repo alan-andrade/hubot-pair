@@ -7,9 +7,16 @@
     "url": "https://github.com/alan-andrade/hubot-pair.git"
   },
   "devDependencies": {
-    "qunit": "0.6.4"
+    "mocha": "1.20.1",
+    "chai": "1.9.1",
+    "sinon": "1.10.2"
   },
-  "Dependencies": {
-    "coffee-script": "1.6.3"
+  "dependencies": {
+    "coffee-script": "1.6.3",
+    "xdate": "0.8.0",
+    "underscore": "1.6.0"
+  },
+  "scripts": {
+    "test": "mocha test/*  --compilers coffee:coffee-script -R spec"
   }
 }

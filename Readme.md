@@ -26,3 +26,7 @@ If you end up pairing with somebody, let hubot know.
 ```shell
 hubot im pairing with person1
 ```
+
+## Test
+
+`npm test`
