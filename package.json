@@ -17,6 +17,7 @@
     "underscore": "1.6.0"
   },
   "scripts": {
-    "test": "mocha test/*  --compilers coffee:coffee-script -R spec"
+    "test": "mocha test/*  --compilers coffee:coffee-script -R spec",
+    "test-watch": "mocha test/*  --compilers coffee:coffee-script -R nyan --watch"
   }
 }

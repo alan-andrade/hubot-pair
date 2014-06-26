@@ -2,62 +2,81 @@ chai = require 'chai'
 expect = chai.expect
 sinon = require 'sinon'
 
-Pair = require '../lib/pair'
-Controller = require '../lib/controller'
+pairme = require '../lib/pairme'
+Developer = pairme.Developer
+Pair = pairme.Pair
+Controller = pairme.Controller
 
 describe 'Controller', ->
   beforeEach ->
     @controller = new Controller
 
-  it 'adds jake to the free pairing list', ->
-    expect(@controller.get_free_devs().size()).to.eq(0)
+  it 'adds jake to the developers list', ->
+    expect(@controller.devs.size()).to.eq(0)
     @controller.add 'jake'
-    expect(@controller.get_free_devs().size()).to.eq(1)
+    expect(@controller.devs.size()).to.eq(1)
 
-  it 'formats the list of free pairs', ->
-    @controller.add 'jake'
-    @controller.add 'fin', 40
-    msg = @controller.get_free_devs().toMsg()
-    expect(msg).to.eq('jake[60], fin[40]')
+  describe 'format', ->
+    describe 'empty list', ->
+      it 'prints special msg if nobody is available', ->
+        expect(@controller.display()).to.match(/Nobody is available/)
+
+      it 'prints available developers', ->
+        @controller.add 'jake'
+        @controller.add 'fin', 40
+        expect(@controller.display()).to.match(/jake\[60\], fin\[40\]/)
+
+      it 'prints pairing developers', ->
+        @controller.add 'jake'
+        @controller.add 'fin', 40
+        @controller.pair 'jake', 'fin'
+        expect(@controller.display()).to.match(/jake-fin/)
+
+      it 'prints both states', ->
+        @controller.add 'jake'
+        @controller.add 'fin', 40
+        @controller.pair 'jake', 'fin'
+        @controller.add 'iceking'
+        expect(@controller.display()).to.match(/iceking/)
+        expect(@controller.display()).to.match(/jake-fin/)
 
   it 'pairs jake and fin', ->
     @controller.add 'jake'
     @controller.add 'fin'
     @controller.pair 'jake', 'fin'
-    expect(@controller.get_free_devs().size()).to.eq(0)
-    expect(@controller.get_busy_devs().size()).to.eq(2)
+    expect(@controller.devs.size()).to.eq(2)
+    expect(@controller.pairs.size()).to.eq(1)
 
- describe 'Pair', ->
+ describe 'Developer', ->
    it 'has a name and availability', ->
-     pair = new Pair 'jake', 12
-     expect(pair.name).to.eq('jake')
-     expect(pair.availability).to.eq(12)
+     dev = new Developer 'jake', 12
+     expect(dev.name).to.eq('jake')
+     expect(dev.availability).to.eq(12)
 
    it 'default availability to 60', ->
-     pair = new Pair 'jake'
+     pair = new Developer 'jake'
      expect(pair.availability).to.eq(60)
 
    it 'defaults to not be pairing', ->
-     pair = new Pair 'jake'
+     pair = new Developer 'jake'
      expect(pair.isPairing).to.be.false
 
    it 'reads nicely name[time]', ->
-     pair = new Pair 'jake'
+     pair = new Developer 'jake'
      txt = pair.toString()
      expect(txt).to.eq('jake[60]')
 
-   it 'knows when you signed up', ->
+   it 'knows when jake started to be available', ->
      clock = sinon.useFakeTimers(+new Date())
-     pair = new Pair 'jake', 30
+     pair = new Developer 'jake', 30
      clock.tick '00:15:00'
      expect(pair.timeLeft()).to.eq(15)
      clock.restore()
 
-    it 'pairs jake with fin', ->
-      jake = new Pair 'jake'
-      fin = new Pair 'fin'
-      jake.pairWith fin
-      for pair in [jake, fin]
-        expect(pair.isPairing).to.be.true
-      expect(jake.pairingWith).to.eql(fin)
-      expect(fin.pairingWith).to.eql(jake)
+  describe 'Pair', ->
+    it 'has two developers', ->
+      jake = new Developer 'jake'
+      fin = new Developer 'fin'
+      pair = new Pair jake, fin
+      for dev in [jake, fin]
+        expect(dev.isPairing).to.be.true
