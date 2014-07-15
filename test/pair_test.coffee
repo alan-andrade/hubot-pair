@@ -96,9 +96,10 @@ describe 'Controller', ->
       for dev in [jake, fin]
         expect(dev.isPairing).to.be.true
 
-    it 'reads nicely developer1-developer2', ->
+    it 'reads nicely developer1-developer2 [timeleft]', ->
       pair = new Pair new Developer('jake'), new Developer('fin')
-      expect(pair.toString()).to.eq('jake-fin')
+      expect(pair.toString()).to.match(/jake-fin/)
+      expect(pair.toString()).to.match(new RegExp pair.timeLeft())
 
     it 'calculates time left depending on developers timeLeft', ->
       jake = new Developer 'jake', 8

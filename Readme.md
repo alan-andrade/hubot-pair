@@ -31,3 +31,17 @@ hubot pairme with jake
 ## Test
 
 `npm test`
+
+# TODO
+
+- Being able to unpair people
+- Let people know when the time is up
+- Use a different storage mechanism
+- Statitics capabilities
+
+# Contributing
+
+Send your pull request along with some tests.
+
+# Maintainers
+- @alan-andrade

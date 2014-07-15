@@ -28,7 +28,7 @@ class Pair
         'timeLeft'))
 
   toString: ->
-    "#{@dev1}-#{@dev2}"
+    "#{@dev1}-#{@dev2} [#{@timeLeft()}]"
 
 class Controller
   constructor: ->
@@ -50,11 +50,11 @@ class Controller
   pair: (id1, id2) ->
     dev1 = @devs.findByName id1
     dev2 = @devs.findByName id2
-    if dev1 && dev2
+    if dev1 and dev2
       pair = @pairs.add(new Pair(dev1, dev2))
       setTimeout (=>
         @pairs.delete(pair)
-      ), pair.timeLeft()
+      ), pair.timeLeft() * 1000 * 60
 
 class Collection
   constructor: ->
